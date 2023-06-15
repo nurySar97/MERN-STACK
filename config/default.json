@@ -1,6 +1,0 @@
-{
-    "port": 5000,
-    "mongoUri": "mongodb+srv://Muhammet:Turkmen97@cluster0.edbdb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    "jwtSecret": "nurSary97 mern",
-    "baseUrl": "http://localhost:5000"
-}

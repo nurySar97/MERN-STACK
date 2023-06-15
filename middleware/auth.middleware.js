@@ -1,33 +1,23 @@
-const jwt = require('jsonwebtoken');
-const config = require('config');
+const jwt = require("jsonwebtoken");
 
 module.exports = async (req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return next();
+  }
 
-    if (req.method === 'OPTIONS') {
+  try {
+    const token = req.headers.authorization.split(" ")[1]; // 'Bearer TOKEN'
 
-        return next();
-
+    if (!token) {
+      res.status(401).json({ message: "No authorization!" });
     }
 
-    try {
+    const decoded = jwt.verify(token, process.env.jwtSecret);
 
-        const token = req.headers.authorization.split(' ')[1] // 'Bearer TOKEN'
+    req.user = decoded;
 
-        if (!token) {
-
-            res.status(401).json({ message: 'No authorization!' });
-
-        }
-
-        const decoded = jwt.verify(token, config.get('jwtSecret'));
-
-        req.user = decoded;
-
-        next();
-
-    } catch (e) {
-
-        res.status(401).json({ message: 'No authorization!' });
-
-    }
-}
+    next();
+  } catch (e) {
+    res.status(401).json({ message: "No authorization!" });
+  }
+};

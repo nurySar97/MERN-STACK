@@ -6,9 +6,9 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node app.js",
     "server": "nodemon start",
-    "client": "npm run start --prefix client_app",
-    "client:install": "npm install --prefix client_app",
-    "client:build": "npm run build --prefix client_app",
+    "client": "npm run start --prefix client",
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
     "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [
@@ -19,10 +19,10 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "config": "^3.3.6",
+    "dotenv": "^16.1.4",
     "express": "^4.17.1",
     "express-validator": "^6.11.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^5.12.13",
     "shortid": "^2.2.16"
   },

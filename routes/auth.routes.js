@@ -1,132 +1,106 @@
-const { Router } = require('express');
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const { check, validationResult } = require('express-validator');
+const { Router } = require("express");
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { check, validationResult } = require("express-validator");
 
 const router = Router();
 
 // /api/auth/register
 router.post(
+  "/register",
 
-    '/register',
+  [
+    check("email", "Incorrect email!").isEmail(),
 
-    [
+    check("password", "Min length of password 6").isLength({ min: 6 }),
+  ],
 
-        check('email', 'Incorrect email!').isEmail(),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
 
-        check('password', 'Min length of password 6').isLength({ min: 6 })
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          errors: errors.array(),
 
-    ],
+          message: "Incorrect registration data!",
+        });
+      }
 
-    async (req, res) => {
+      const { email, password } = req.body;
+      const candidate = await User.findOne({ email });
 
-        try {
+      if (candidate) {
+        return res.status(400).json({ message: "This email already exists!" });
+      }
 
-            const errors = validationResult(req);
+      const hashedPassword = await bcrypt.hash(password, 12);
 
-            if (!errors.isEmpty()) {
+      const user = new User({ email, password: hashedPassword });
 
-                return res.status(400).json({
+      await user.save();
 
-                    errors: errors.array(),
-
-                    message: 'Incorrect registration data!'
-
-                })
-
-            }
-
-            const { email, password } = req.body;
-            const candidate = await User.findOne({ email });
-
-            if (candidate) {
-
-                return res.status(400).json({ message: 'This email already exists!' });
-
-            }
-
-            const hashedPassword = await bcrypt.hash(password, 12);
-
-            const user = new User({ email, password: hashedPassword });
-
-            await user.save();
-
-            res.status(201).json({ message: 'User created!' });
-
-        } catch (e) {
-
-            res.status(500).json({ message: "Something went wrong...try please again!" });
-
-        }
-    })
-
+      res.status(201).json({ message: "User created!" });
+    } catch (e) {
+      res
+        .status(500)
+        .json({ message: "Something went wrong...try please again!" });
+    }
+  }
+);
 
 // /api/auth/login
 router.post(
+  "/login",
 
-    '/login',
+  [
+    check("email", "Enter please correct email!").normalizeEmail().isEmail(),
 
-    [
+    check("password", "Enter please password!").exists(),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
 
-        check('email', 'Enter please correct email!').normalizeEmail().isEmail(),
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          errors: errors.array(),
 
-        check('password', 'Enter please password!').exists()
+          message: "Incorrect login data",
+        });
+      }
 
-    ],
-    async (req, res) => {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
 
-        try {
+      if (!user) {
+        return res.status(400).json({ message: "User not found!" });
+      }
 
-            const errors = validationResult(req);
+      const isMatch = await bcrypt.compare(password, user.password);
 
-            if (!errors.isEmpty()) {
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ message: "Incorrect password, please repeat again!" });
+      }
 
-                return res.status(400).json({
+      const token = jwt.sign(
+        { userId: user.id },
 
-                    errors: errors.array(),
+        process.env.jwtSecret,
 
-                    message: 'Incorrect login data'
+        { expiresIn: "1h" }
+      );
 
-                })
-                
-            }
-
-            const { email, password } = req.body;
-            const user = await User.findOne({ email });
-
-            if (!user) {
-
-                return res.status(400).json({ message: 'User not found!' });
-
-            }
-
-            const isMatch = await bcrypt.compare(password, user.password);
-
-            if (!isMatch) {
-
-                return res.status(400).json({ message: 'Incorrect password, please repeat again!' });
-
-            }
-
-            const token = jwt.sign(
-
-                { userId: user.id },
-
-                config.get('jwtSecret'),
-
-                { expiresIn: '1h' }
-
-            )
-
-            res.json({ token, userId: user.id });
-
-        } catch (e) {
-
-            res.status(500).json({ message: "Something went wrong...try please again!" });
-            
-        }
-    });
+      res.json({ token, userId: user.id });
+    } catch (e) {
+      res
+        .status(500)
+        .json({ message: "Something went wrong...try please again!" });
+    }
+  }
+);
 
 module.exports = router;

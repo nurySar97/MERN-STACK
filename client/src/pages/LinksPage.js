@@ -29,7 +29,7 @@ const LinksPage = () => {
     return <Loader />;
   }
 
-  return <>{!loading && <LinksList links={links} />}</>;
+  return <>{!loading && <LinksList links={links} setLinks={setLinks} />}</>;
 };
 
 export default LinksPage;

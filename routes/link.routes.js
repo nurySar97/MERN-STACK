@@ -18,7 +18,6 @@ router.post("/generate", authMiddleware, async (req, res) => {
     const to = baseUrl + "/t/" + code;
     const link = new Link({ code, to, from, owner: req.user.userId });
     await link.save();
-
     res.status(201).json({ link });
   } catch (e) {
     res
@@ -27,10 +26,19 @@ router.post("/generate", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/delete", authMiddleware, async (req, res) => {
+  try {
+    await Link.deleteOne({ _id: req.body.linkId });
+    const links = await Link.find({ owner: req.user.userId });
+    res.status(201).json({ message: "Link has been removed!", links });
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const links = await Link.find({ owner: req.user.userId }); // ???
-
     res.json(links);
   } catch (e) {
     res
@@ -42,7 +50,6 @@ router.get("/", authMiddleware, async (req, res) => {
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const link = await Link.findById(req.params.id); //???
-
     res.json(link);
   } catch (e) {
     res

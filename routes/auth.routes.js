@@ -9,21 +9,18 @@ const router = Router();
 // /api/auth/register
 router.post(
   "/register",
-
   [
     check("email", "Incorrect email!").isEmail(),
-
     check("password", "Min length of password 6").isLength({ min: 6 }),
   ],
-
   async (req, res) => {
     try {
       const errors = validationResult(req);
+      const hasError = !errors.isEmpty();
 
-      if (!errors.isEmpty()) {
+      if (hasError) {
         return res.status(400).json({
           errors: errors.array(),
-
           message: "Incorrect registration data!",
         });
       }
@@ -36,11 +33,8 @@ router.post(
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
-
       const user = new User({ email, password: hashedPassword });
-
       await user.save();
-
       res.status(201).json({ message: "User created!" });
     } catch (e) {
       res
@@ -53,20 +47,18 @@ router.post(
 // /api/auth/login
 router.post(
   "/login",
-
   [
     check("email", "Enter please correct email!").normalizeEmail().isEmail(),
-
     check("password", "Enter please password!").exists(),
   ],
   async (req, res) => {
     try {
       const errors = validationResult(req);
+      const hasError = !errors.isEmpty();
 
-      if (!errors.isEmpty()) {
+      if (hasError) {
         return res.status(400).json({
           errors: errors.array(),
-
           message: "Incorrect login data",
         });
       }
@@ -86,14 +78,9 @@ router.post(
           .json({ message: "Incorrect password, please repeat again!" });
       }
 
-      const token = jwt.sign(
-        { userId: user.id },
-
-        process.env.jwtSecret,
-
-        { expiresIn: "1h" }
-      );
-
+      const token = jwt.sign({ userId: user.id }, process.env.jwtSecret, {
+        expiresIn: "1h",
+      });
       res.json({ token, userId: user.id });
     } catch (e) {
       res

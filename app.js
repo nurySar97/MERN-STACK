@@ -1,34 +1,29 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const path = require("path");
 
 require("dotenv").config();
 
-const mongoDbUrl = `mongodb+srv://${process.env.MONGODB_LOGIN}:${process.env.MONGODB_PASSWORD}@cluster0.dica1nv.mongodb.net/?retryWrites=true&w=majority`;
+// Routes
+const authRoutes = require("./routes/auth.routes");
+const linkRoutes = require("./routes/link.routes");
+const redirectRoutes = require("./routes/redirect.routes");
 
 /* Middlewares */
 app.use(express.json({ extended: true }));
-app.use("/api/auth", require("./routes/auth.routes"));
-app.use("/api/link", require("./routes/link.routes"));
-app.use("/t/", require("./routes/redirect.routes"));
+app.use("/api/auth", authRoutes);
+app.use("/api/link", linkRoutes);
+app.use("/t/", redirectRoutes);
 
-// app.get("*", (req, res) => {
-//   res.sendFile(path.resolve(__dirname, "client", "index.html"));
-//   res.send("Hello World!");
-// });
-
-/* PORT */
+/* Port */
 const PORT = process.env.port || 5000;
 
-/* INIT */
+/* Init */
 void (async function () {
   try {
-    await mongoose.connect(mongoDbUrl, {
+    await mongoose.connect(process.env.MONGODB_URL, {
       useNewUrlParser: true,
-
       useUnifiedTopology: true,
-
       useCreateIndex: true,
     });
 

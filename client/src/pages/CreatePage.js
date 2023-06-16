@@ -20,7 +20,9 @@ const CreatePage = () => {
         );
 
         navigate(`/detail/${response.link._id}`);
-      } catch (e) {}
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -30,7 +32,7 @@ const CreatePage = () => {
 
   return (
     <div className="row">
-      <div className="col blue s8 offset-s2" style={{ paddingTop: "2rem" }}>
+      <div className="col blue s12">
         <div className="input-field">
           <input
             className="yellow-input"
@@ -38,7 +40,7 @@ const CreatePage = () => {
             id="link"
             type="text"
             onChange={(e) => setLink(e.target.value)}
-            onKeyPress={pressHandler}
+            onKeyUp={pressHandler}
           />
 
           <label htmlFor="link">Link</label>

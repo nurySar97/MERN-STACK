@@ -6,24 +6,8 @@ import { useMessage } from "../hooks/message.hook";
 const AuthPage = () => {
   const { loading, error, request, clearError } = useHttp();
   const { login } = useContext(AuthContext);
-
   const message = useMessage();
-
-  const [form, setForm] = useState({
-    email: "",
-
-    password: "",
-  });
-
-  useEffect(() => {
-    message(error);
-
-    clearError();
-  }, [error, message, clearError]);
-
-  useEffect(() => {
-    window.M.updateTextFields();
-  }, []);
+  const [form, setForm] = useState({ email: "", password: "" });
 
   const changeHandler = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -32,18 +16,29 @@ const AuthPage = () => {
   const registerHandler = async () => {
     try {
       const data = await request("/api/auth/register", "POST", form);
-
       message(data.message);
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const loginHandler = async () => {
     try {
       const data = await request("/api/auth/login", "POST", form);
-
       login(data.token, data.userId);
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  useEffect(() => {
+    message(error);
+    clearError();
+  }, [error, message, clearError]);
+
+  useEffect(() => {
+    window.M.updateTextFields();
+  }, []);
 
   return (
     <div className="row">

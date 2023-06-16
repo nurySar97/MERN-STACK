@@ -16,7 +16,9 @@ const LinksPage = () => {
       });
 
       setLinks(fetched);
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+    }
   }, [token, request]);
 
   useEffect(() => {

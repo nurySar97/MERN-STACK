@@ -13,9 +13,7 @@ module.exports = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.jwtSecret);
-
     req.user = decoded;
-
     next();
   } catch (e) {
     res.status(401).json({ message: "No authorization!" });

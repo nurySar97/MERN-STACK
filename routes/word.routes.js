@@ -1,8 +1,8 @@
 const { Router } = require("express");
-const Link = require("../models/Link");
+const Word = require("../models/Word");
 const router = Router();
 
-router.get("/:code", async (req, res) => {
+router.get("/add", async (req, res) => {
   try {
     const link = await Link.findOne({ code: req.params.code });
     if (link) {

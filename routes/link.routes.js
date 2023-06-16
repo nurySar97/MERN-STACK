@@ -9,7 +9,6 @@ router.post("/generate", authMiddleware, async (req, res) => {
     const baseUrl = process.env.baseUrl;
     const { from } = req.body;
     const code = shortid.generate();
-
     const isExist = await Link.findOne({ from });
 
     if (isExist) {
@@ -17,9 +16,7 @@ router.post("/generate", authMiddleware, async (req, res) => {
     }
 
     const to = baseUrl + "/t/" + code;
-
     const link = new Link({ code, to, from, owner: req.user.userId });
-
     await link.save();
 
     res.status(201).json({ link });

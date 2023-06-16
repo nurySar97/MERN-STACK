@@ -8,9 +8,7 @@ const Navbar = () => {
 
   const logoutHandler = (e) => {
     e.preventDefault();
-
     logout();
-
     navigate("/");
   };
 

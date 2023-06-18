@@ -8,12 +8,14 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth.routes");
 const linkRoutes = require("./routes/link.routes");
 const redirectRoutes = require("./routes/redirect.routes");
+const wordsRoutes = require("./routes/words.routes");
 
 /* Middlewares */
 app.use(express.json({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/link", linkRoutes);
 app.use("/t/", redirectRoutes);
+app.use("/api/word", wordsRoutes);
 
 /* Port */
 const PORT = process.env.port || 5000;

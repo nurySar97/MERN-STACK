@@ -14,7 +14,6 @@ const LinksPage = () => {
       const fetched = await request("/api/link", "GET", null, {
         Authorization: `Bearer ${token}`,
       });
-
       setLinks(fetched);
     } catch (e) {
       console.error(e);

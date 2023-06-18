@@ -6,9 +6,9 @@ const wordSchema = new Schema({
 });
 
 const schema = new Schema({
-  user: { type: Types.ObjectId, ref: "User" },
+  owner: { type: Types.ObjectId, ref: "User" },
   date: { type: Date, default: Date.now() },
   words: [wordSchema],
 });
 
-module.exports = model("Word", schema);
+module.exports = model("Words", schema);

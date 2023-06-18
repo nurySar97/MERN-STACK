@@ -18,13 +18,14 @@ const Navbar = () => {
         <span className="brand-logo">Reduce links</span>
         <ul id="nav-mobile" className="right hide-on-med-and-down">
           <li>
+            <NavLink to="/addWord">Add New Word</NavLink>
+          </li>
+          <li>
             <NavLink to="/create">Create</NavLink>
           </li>
-
           <li>
             <NavLink to="/links">Links</NavLink>
           </li>
-
           <li>
             <NavLink to="/" onClick={logoutHandler}>
               Logout

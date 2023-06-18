@@ -81,7 +81,7 @@ router.post(
       const token = jwt.sign({ userId: user.id }, process.env.jwtSecret, {
         expiresIn: "1h",
       });
-      res.json({ token, userId: user.id });
+      res.json({ token, userId: user.id, user });
     } catch (e) {
       res
         .status(500)
